@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import { DatabaseModule } from './modules/database/database.module';
+import { UsersModule } from './modules/users/users.module';
 import { validate } from './config/env.validation';
-// Import UsersModule and AuthModule when they are created later
+// Import AuthModule when it is created later
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { validate } from './config/env.validation';
       },
     }),
     DatabaseModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
