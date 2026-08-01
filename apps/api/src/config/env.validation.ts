@@ -18,7 +18,7 @@ class EnvironmentVariables {
   PORT: number = 3001;
 
   @IsString()
-  DB_URL: string;
+  DATABASE_URL: string;
 
   @IsString()
   @MinLength(32)
