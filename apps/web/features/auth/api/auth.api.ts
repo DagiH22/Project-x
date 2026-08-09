@@ -22,9 +22,6 @@ export const authApi = {
       return response.data;
     } catch (error: any) {
       if (error?.statusCode === 401) {
-        try {
-          await apiClient.post('/auth/logout');
-        } catch (_) {}
         return null;
       }
       throw error;

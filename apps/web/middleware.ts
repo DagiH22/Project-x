@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const AUTH_COOKIE_NAME = 'Authentication'; // Standard NestJS JWT cookie name
+const AUTH_COOKIE_NAME = 'access_token'; // Backend JWT cookie name
 const PUBLIC_ROUTES = ['/login', '/register'];
 
 export function middleware(request: NextRequest) {
@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
 
   if (hasAuthCookie && isPublicRoute) {
     // Redirect authenticated users trying to access login/register to dashboard
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   return NextResponse.next();

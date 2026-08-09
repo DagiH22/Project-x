@@ -11,6 +11,8 @@ export function useAuth() {
     queryFn: authApi.getCurrentUser,
     retry: false, // Do not retry on 401
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
 
   const loginMutation = useMutation({

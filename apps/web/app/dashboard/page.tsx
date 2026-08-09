@@ -1,6 +1,4 @@
 'use client';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/feedback/empty-state';
@@ -9,14 +7,7 @@ import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DashboardPage() {
-  const { user, logout, isLoggingOut, isAuthenticated, isLoading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isLoading, isAuthenticated, router]);
+  const { user, logout, isLoggingOut } = useAuth();
 
   const handleLogout = async () => {
     try {
