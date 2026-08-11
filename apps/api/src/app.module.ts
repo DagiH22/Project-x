@@ -4,6 +4,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { DatabaseModule } from './modules/database/database.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { StorageModule } from './modules/storage/storage.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -23,6 +24,7 @@ import { validate } from './config/env.validation';
     DatabaseModule,
     UsersModule,
     AuthModule,
+    StorageModule,
   ],
   controllers: [],
   providers: [],

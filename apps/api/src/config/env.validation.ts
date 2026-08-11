@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsEnum, validateSync, MinLength } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsEnum, validateSync, MinLength, IsBoolean } from 'class-validator';
 import { plainToInstance, Type } from 'class-transformer';
 
 export enum Environment {
@@ -23,6 +23,25 @@ class EnvironmentVariables {
   @IsString()
   @MinLength(32)
   JWT_SECRET:string;
+
+  @IsString()
+  S3_ENDPOINT: string;
+
+  @IsString()
+  S3_REGION: string;
+
+  @IsString()
+  S3_ACCESS_KEY: string;
+
+  @IsString()
+  S3_SECRET_KEY: string;
+
+  @IsString()
+  S3_BUCKET: string;
+
+  @IsBoolean()
+  @IsOptional()
+  S3_FORCE_PATH_STYLE: boolean = true;
 }
 
 export function validate(config: Record<string, unknown>) {
