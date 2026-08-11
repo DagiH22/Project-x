@@ -17,8 +17,8 @@ export function useAuth() {
 
   const loginMutation = useMutation({
     mutationFn: (credentials: LoginFormData) => authApi.login(credentials),
-    onSuccess: (response) => {
-      queryClient.setQueryData(QUERY_KEYS.AUTH.ME, response.data);
+    onSuccess: (user) => {
+      queryClient.setQueryData(QUERY_KEYS.AUTH.ME, user);
     },
   });
 
@@ -32,7 +32,7 @@ export function useAuth() {
     mutationFn: authApi.logout,
     onSuccess: () => {
       queryClient.setQueryData(QUERY_KEYS.AUTH.ME, null);
-      queryClient.removeQueries({ queryKey: QUERY_KEYS.AUTH.ME });
+      window.location.href = '/login';
     },
   });
 

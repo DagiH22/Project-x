@@ -34,11 +34,13 @@ export function parseApiError(error: unknown): ApiError {
       }
       
       // Handle standard NestJS validation error format: { message: string[], error: string, statusCode: 400 }
-      if (Array.isArray(responseData.message)) {
+      const nestResponse = responseData as any;
+      
+      if (Array.isArray(nestResponse.message)) {
         // Map string[] messages to a details object (general or field specific)
         // Usually NestJS returns messages like "email must be an email"
         const details: Record<string, string[]> = {};
-        responseData.message.forEach((msg: string) => {
+        nestResponse.message.forEach((msg: string) => {
           const field = msg.split(' ')[0]; // rough guess at field name
           if (!details[field]) details[field] = [];
           details[field].push(msg);
@@ -53,9 +55,9 @@ export function parseApiError(error: unknown): ApiError {
       }
       
       // Handle standard string error message
-      if (typeof responseData.message === 'string') {
+      if (typeof nestResponse.message === 'string') {
         return new ApiError(
-          responseData.message,
+          nestResponse.message,
           responseData.statusCode || error.response.status,
           typeof responseData.error === 'string' ? responseData.error : 'API_ERROR'
         );
