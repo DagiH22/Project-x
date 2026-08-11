@@ -8,6 +8,13 @@
       "when": 1785609391724,
       "tag": "0000_silly_celestials",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786446897728,
+      "tag": "0001_breezy_the_anarchist",
+      "breakpoints": true
     }
   ]
 }
