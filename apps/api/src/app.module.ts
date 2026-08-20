@@ -5,6 +5,7 @@ import { DatabaseModule } from './modules/database/database.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { StorageModule } from './modules/storage/storage.module';
+import { DocumentsModule } from './modules/documents/documents.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -25,6 +26,7 @@ import { validate } from './config/env.validation';
     UsersModule,
     AuthModule,
     StorageModule,
+    DocumentsModule,
   ],
   controllers: [],
   providers: [],

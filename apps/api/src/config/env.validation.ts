@@ -42,6 +42,11 @@ class EnvironmentVariables {
   @IsBoolean()
   @IsOptional()
   S3_FORCE_PATH_STYLE: boolean = true;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  MAX_DOCUMENT_SIZE: number = 5242880; // Default 5MB
 }
 
 export function validate(config: Record<string, unknown>) {

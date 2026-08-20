@@ -15,6 +15,13 @@
       "when": 1786446897728,
       "tag": "0001_breezy_the_anarchist",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786486615842,
+      "tag": "0002_flowery_ben_grimm",
+      "breakpoints": true
     }
   ]
 }
