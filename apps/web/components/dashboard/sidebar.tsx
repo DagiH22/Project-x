@@ -20,7 +20,7 @@ const NAVIGATION = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Conversations', href: '#', icon: MessageSquare, disabled: true },
   { name: 'Tickets', href: '#', icon: Ticket, disabled: true },
-  { name: 'Knowledge Base', href: '#', icon: BookOpen, disabled: true },
+  { name: 'Knowledge Base', href: '/dashboard/knowledge-base', icon: BookOpen },
   { name: 'Tools', href: '#', icon: Wrench, disabled: true },
   { name: 'Analytics', href: '#', icon: BarChart3, disabled: true },
   { name: 'Settings', href: '#', icon: Settings, disabled: true },
