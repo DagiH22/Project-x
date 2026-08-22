@@ -2,11 +2,12 @@ import 'multer';
 import { Injectable, Logger, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { StorageService } from '../storage/storage.service';
-import { documents, Document } from '@agentdesk/db';
+import { documents } from '@agentdesk/db';
 import { eq, and } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
+import { extname } from 'path';
 import { DocumentResponse } from './types/document.types';
-
+import { ExtractionService } from '../extraction/extraction.service';
 @Injectable()
 export class DocumentsService {
   private readonly logger = new Logger(DocumentsService.name);
@@ -14,15 +15,21 @@ export class DocumentsService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly storageService: StorageService,
+    private readonly extractionService: ExtractionService,
   ) {}
 
   async uploadDocument(
     userId: string,
     file: Express.Multer.File,
   ): Promise<DocumentResponse> {
+    // 1. Verify content before uploading (throws if invalid or empty)
+    await this.extractionService.extractText(file.buffer, file.mimetype);
+
     const uuid = randomUUID();
-    // E.g., documents/user-uuid/doc-uuid.pdf
-    const storageKey = `documents/${userId}/${uuid}-${file.originalname}`;
+    // Use only UUID + sanitized extension — never embed the original filename in the storage key
+    // to prevent path traversal and to avoid exposing user-supplied filenames in storage.
+    const safeExt = extname(file.originalname).replace(/[^a-zA-Z0-9.]/g, '').slice(0, 10);
+    const storageKey = `documents/${userId}/${uuid}${safeExt}`;
 
     try {
       await this.storageService.upload({
@@ -48,7 +55,9 @@ export class DocumentsService {
         })
         .returning();
 
-      return newDoc as DocumentResponse;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { storageKey: _storageKey, ...safeDoc } = newDoc;
+      return safeDoc as DocumentResponse;
     } catch (error: any) {
       this.logger.error(`Failed to save document metadata in DB. Rolling back storage.`, error.stack);
       
@@ -70,7 +79,8 @@ export class DocumentsService {
         .from(documents)
         .where(eq(documents.userId, userId));
       
-      return docs as DocumentResponse[];
+      // Strip internal storageKey from client response
+      return docs.map(({ storageKey: _k, ...rest }) => rest) as DocumentResponse[];
     } catch (error: any) {
       this.logger.error(`Failed to retrieve documents for user ${userId}`, error.stack);
       throw new InternalServerErrorException('Failed to retrieve documents');
