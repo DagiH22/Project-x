@@ -1,14 +1,11 @@
 import { apiClient } from '@/lib/api/client';
 
-/**
- * Document as returned by the API.
- * storageKey is intentionally absent — it is an internal S3 path
- * and must not be exposed to or used by the frontend.
- */
+
 export interface Document {
   id: string;
   userId: string;
   filename: string;
+  storageKey: string;
   mimeType: string;
   size: number;
   status: 'uploaded' | 'processing' | 'ready' | 'failed';
@@ -20,21 +17,14 @@ export const getDocuments = (): Promise<Document[]> => {
   return apiClient.get<Document[]>('/documents');
 };
 
-export const uploadDocument = ({ file, onProgress }: { file: File, onProgress?: (percent: number) => void }): Promise<Document> => {
+export const uploadDocument = (file: File): Promise<Document> => {
   const formData = new FormData();
   formData.append('file', file);
-
-  // We explicitly override the default application/json header from axiosInstance.
-  // Axios will automatically handle the form data boundary formatting.
+  
   return apiClient.post<Document>('/documents', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-    onUploadProgress: (progressEvent) => {
-      if (onProgress && progressEvent.total) {
-        onProgress(Math.round((progressEvent.loaded * 100) / progressEvent.total));
-      }
-    }
   });
 };
 

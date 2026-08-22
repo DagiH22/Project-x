@@ -36,7 +36,3 @@ Thumbs.db
 
 # Setup script
 setup.ps1
-
-# Temporary test scripts
-test-storage.*
-apps/api/test-storage.*

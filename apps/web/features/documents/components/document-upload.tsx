@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 
 export function DocumentUpload() {
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadMutation = useUploadDocument();
 
@@ -27,19 +26,15 @@ export function DocumentUpload() {
       return;
     }
 
-    setUploadProgress(0);
-
-    uploadMutation.mutate({ file, onProgress: setUploadProgress }, {
+    uploadMutation.mutate(file, {
       onSuccess: () => {
         toast.success(`${file.name} uploaded successfully.`);
-        setUploadProgress(0);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
       },
       onError: (error: any) => {
-        toast.error(error?.message || error?.response?.data?.message || 'Failed to upload document.');
-        setUploadProgress(0);
+        toast.error(error?.response?.data?.message || 'Failed to upload document.');
       },
     });
   };
@@ -82,9 +77,7 @@ export function DocumentUpload() {
             )}
           </div>
           <h3 className="text-lg font-semibold mb-1">
-            {uploadMutation.isPending 
-              ? (uploadProgress === 100 ? 'Verifying...' : 'Uploading...') 
-              : 'Click or drag file to this area to upload'}
+            {uploadMutation.isPending ? 'Uploading...' : 'Click or drag file to this area to upload'}
           </h3>
           <p className="text-sm text-muted-foreground mb-4">
             Support for a single upload.
@@ -102,9 +95,7 @@ export function DocumentUpload() {
             disabled={uploadMutation.isPending}
             variant="outline"
           >
-            {uploadMutation.isPending 
-              ? (uploadProgress === 100 ? 'Verifying...' : 'Uploading...') 
-              : 'Select File'}
+            {uploadMutation.isPending ? 'Uploading...' : 'Select File'}
           </Button>
         </div>
       </CardContent>
