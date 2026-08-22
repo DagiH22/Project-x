@@ -20,13 +20,22 @@ export const getDocuments = (): Promise<Document[]> => {
   return apiClient.get<Document[]>('/documents');
 };
 
-export const uploadDocument = (file: File): Promise<Document> => {
+export const uploadDocument = ({ file, onProgress }: { file: File, onProgress?: (percent: number) => void }): Promise<Document> => {
   const formData = new FormData();
   formData.append('file', file);
 
-  // Do NOT manually set Content-Type for multipart/form-data.
-  // The browser must set it automatically so the correct boundary is included.
-  return apiClient.post<Document>('/documents', formData);
+  // We explicitly override the default application/json header from axiosInstance.
+  // Axios will automatically handle the form data boundary formatting.
+  return apiClient.post<Document>('/documents', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        onProgress(Math.round((progressEvent.loaded * 100) / progressEvent.total));
+      }
+    }
+  });
 };
 
 export const deleteDocument = (id: string): Promise<void> => {

@@ -6,6 +6,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { DocumentsModule } from './modules/documents/documents.module';
+import { ExtractionModule } from './modules/extraction/extraction.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -27,6 +28,7 @@ import { validate } from './config/env.validation';
     AuthModule,
     StorageModule,
     DocumentsModule,
+    ExtractionModule,
   ],
   controllers: [],
   providers: [],

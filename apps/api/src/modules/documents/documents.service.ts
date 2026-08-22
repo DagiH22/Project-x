@@ -7,7 +7,7 @@ import { eq, and } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { extname } from 'path';
 import { DocumentResponse } from './types/document.types';
-
+import { ExtractionService } from '../extraction/extraction.service';
 @Injectable()
 export class DocumentsService {
   private readonly logger = new Logger(DocumentsService.name);
@@ -15,12 +15,16 @@ export class DocumentsService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly storageService: StorageService,
+    private readonly extractionService: ExtractionService,
   ) {}
 
   async uploadDocument(
     userId: string,
     file: Express.Multer.File,
   ): Promise<DocumentResponse> {
+    // 1. Verify content before uploading (throws if invalid or empty)
+    await this.extractionService.extractText(file.buffer, file.mimetype);
+
     const uuid = randomUUID();
     // Use only UUID + sanitized extension — never embed the original filename in the storage key
     // to prevent path traversal and to avoid exposing user-supplied filenames in storage.
