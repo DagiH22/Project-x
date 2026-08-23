@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { ExtractionModule } from './modules/extraction/extraction.module';
+import { ChunkingModule } from './modules/chunking/chunking.module';
 import { validate } from './config/env.validation';
 
 @Module({
@@ -29,6 +30,7 @@ import { validate } from './config/env.validation';
     StorageModule,
     DocumentsModule,
     ExtractionModule,
+    ChunkingModule,
   ],
   controllers: [],
   providers: [],
