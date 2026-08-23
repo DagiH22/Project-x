@@ -41,3 +41,7 @@ export const uploadDocument = ({ file, onProgress }: { file: File, onProgress?: 
 export const deleteDocument = (id: string): Promise<void> => {
   return apiClient.delete<void>(`/documents/${id}`);
 };
+
+export const getDocumentPreview = (id: string): Promise<{ text: string }> => {
+  return apiClient.get<{ text: string }>(`/documents/${id}/preview`);
+};

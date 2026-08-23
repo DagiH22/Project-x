@@ -10,14 +10,16 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Trash2, FileText, Loader2, File } from 'lucide-react';
+import { Trash2, FileText, Loader2, File, Eye } from 'lucide-react';
 import { useDocuments, useDeleteDocument } from '../hooks/use-documents';
 import { toast } from 'sonner';
+import { DocumentPreviewModal } from './document-preview-modal';
 
 export function DocumentList() {
   const { data: documents, isLoading, isError } = useDocuments();
   const deleteMutation = useDeleteDocument();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<{id: string, filename: string} | null>(null);
 
   const handleDelete = (id: string, filename: string) => {
     if (!window.confirm(`Are you sure you want to delete ${filename}?`)) {
@@ -90,7 +92,7 @@ export function DocumentList() {
             <TableHead>Size</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Date</TableHead>
-            <TableHead className="w-[80px]"></TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -103,7 +105,11 @@ export function DocumentList() {
                 </span>
               </TableCell>
               <TableCell>
-                <span className="text-xs uppercase bg-muted px-2 py-1 rounded-md">
+                <span className={`inline-flex items-center text-xs uppercase px-2 py-1 rounded-md font-medium ${
+                  doc.mimeType === 'application/pdf'
+                    ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                }`}>
                   {doc.mimeType === 'application/pdf' ? 'PDF' : 'TXT'}
                 </span>
               </TableCell>
@@ -125,7 +131,17 @@ export function DocumentList() {
               <TableCell className="text-muted-foreground text-sm">
                 {new Date(doc.createdAt).toLocaleDateString()}
               </TableCell>
-              <TableCell>
+              <TableCell className="text-right space-x-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-foreground"
+                  disabled={doc.status === 'failed'}
+                  onClick={() => setPreviewDoc({ id: doc.id, filename: doc.filename })}
+                  title="Preview document"
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -145,6 +161,13 @@ export function DocumentList() {
           ))}
         </TableBody>
       </Table>
+
+      <DocumentPreviewModal
+        isOpen={!!previewDoc}
+        documentId={previewDoc?.id || null}
+        filename={previewDoc?.filename || null}
+        onClose={() => setPreviewDoc(null)}
+      />
     </div>
   );
 }

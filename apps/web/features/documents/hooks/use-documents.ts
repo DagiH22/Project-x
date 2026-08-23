@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getDocuments, uploadDocument, deleteDocument } from '../api';
+import { getDocuments, uploadDocument, deleteDocument, getDocumentPreview } from '../api';
 import { QUERY_KEYS } from '@/lib/react-query/query-keys';
 
 export const useDocuments = () => {
@@ -28,5 +28,14 @@ export const useDeleteDocument = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.DOCUMENTS.ALL });
     },
+  });
+};
+
+export const useDocumentPreview = (documentId?: string) => {
+  return useQuery({
+    queryKey: QUERY_KEYS.DOCUMENTS.PREVIEW(documentId!),
+    queryFn: () => getDocumentPreview(documentId!),
+    enabled: !!documentId,
+    retry: false,
   });
 };

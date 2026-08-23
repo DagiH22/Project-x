@@ -4,5 +4,6 @@ export const QUERY_KEYS = {
   },
   DOCUMENTS: {
     ALL: ['documents'],
+    PREVIEW: (id: string) => ['documents', 'preview', id],
   },
 } as const;

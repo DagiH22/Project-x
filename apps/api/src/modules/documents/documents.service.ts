@@ -1,5 +1,5 @@
 import 'multer';
-import { Injectable, Logger, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { StorageService } from '../storage/storage.service';
 import { documents } from '@agentdesk/db';
@@ -84,6 +84,41 @@ export class DocumentsService {
     } catch (error: any) {
       this.logger.error(`Failed to retrieve documents for user ${userId}`, error.stack);
       throw new InternalServerErrorException('Failed to retrieve documents');
+    }
+  }
+
+  async getDocumentPreview(userId: string, documentId: string): Promise<{ text: string }> {
+    const [doc] = await this.databaseService.db
+      .select()
+      .from(documents)
+      .where(and(eq(documents.id, documentId), eq(documents.userId, userId)))
+      .limit(1);
+
+    if (!doc) {
+      throw new NotFoundException('Document not found or you do not have permission to view it');
+    }
+
+    if (doc.status === 'failed') {
+      throw new BadRequestException('Document extraction failed');
+    }
+
+    try {
+      const body = await this.storageService.get(doc.storageKey);
+      if (!body) {
+         throw new NotFoundException('Document content not found in storage');
+      }
+
+      const byteArray = await (body as any).transformToByteArray();
+      const buffer = Buffer.from(byteArray);
+
+      const result = await this.extractionService.extractText(buffer, doc.mimeType);
+      return { text: result.text };
+    } catch (error: any) {
+      this.logger.error(`Failed to generate preview for document ${documentId}`, error.stack);
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to generate document preview');
     }
   }
 

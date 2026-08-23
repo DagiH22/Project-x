@@ -67,6 +67,15 @@ export class DocumentsController {
     return this.documentsService.getDocumentsForUser(userId);
   }
 
+  @Get(':id/preview')
+  async getDocumentPreview(
+    @Request() req: any,
+    @Param('id', ParseUUIDPipe) documentId: string,
+  ): Promise<{ text: string }> {
+    const userId = req.user.id;
+    return this.documentsService.getDocumentPreview(userId, documentId);
+  }
+
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteDocument(
